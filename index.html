@@ -751,20 +751,36 @@
             kelimeyiSecVeIsaretle(sozlukVerileri[rastgeleIndex]);
         }
 
-     function gununKelimesiniAyarla() {
+function gununKelimesiniAyarla() {
     if (sozlukVerileri.length === 0) return;
+
+    // 1. Tüm kelimelerin kopyasını al
+    let karistirilmisListe = [...sozlukVerileri];
     
-    // Miladi takvime göre yılın gününü hesapla (1 - 365)
+    // 2. Sabit bir seed (tohum) sayı belirle (Bu sayı herkes için aynı karıştırmayı sağlar)
+    let seed = 2026; 
+
+    // Fisher-Yates Shuffle ile kelimeleri "torbadan çekme" düzeninde karıştır
+    for (let i = karistirilmisListe.length - 1; i > 0; i--) {
+        seed = (seed * 9301 + 49297) % 233280;
+        const j = Math.floor((seed / 233280) * (i + 1));
+        [karistirilmisListe[i], karistirilmisListe[j]] = [karistirilmisListe[j], karistirilmisListe[i]];
+    }
+
+    // 3. Başlangıç tarihinden itibaren kaçıncı günde olduğumuzu hesapla
+    const baslangicTarihi = new Date(2026, 0, 1); // 1 Ocak 2026
     const bugun = new Date();
-    const baslangic = new Date(bugun.getFullYear(), 0, 0);
-    const fark = bugun - baslangic;
-    const gunSayisi = Math.floor(fark / (1000 * 60 * 60 * 24));
+    // Saat farklarını sıfırlamak için gün ortasını baz al
+    const bugunUTC = Date.UTC(bugun.getFullYear(), bugun.getMonth(), bugun.getDate());
+    const baslangicUTC = Date.UTC(baslangicTarihi.getFullYear(), baslangicTarihi.getMonth(), baslangicTarihi.getDate());
     
-    // Basit bir Pseudo-Random Number Generator (PRNG) mantığıyla kelime seçimi
-    // Bu sayede kelimeler sırayla gitmez, rastgele dağılır ama herkese aynı kelime görünür.
-    const pseudoRandomIndex = (gunSayisi * 2654435761) % sozlukVerileri.length;
-    
-    const gununSecimi = sozlukVerileri[pseudoRandomIndex];
+    const gecenGun = Math.floor((bugunUTC - baslangicUTC) / (1000 * 60 * 60 * 24));
+
+    // 4. Geçen gün sayısına göre torbadan sıradaki kelimeyi seç (Tüm kelimeler bitince başa döner)
+    const index = Math.abs(gecenGun) % karistirilmisListe.length;
+    const gununSecimi = karistirilmisListe[index];
+
+    // 5. Ekrana bas ve tıklama nesnesini besle
     document.getElementById('gunun-kelimesi-text').textContent = gununSecimi.kelime;
     window._gununKelimesiObj = gununSecimi;
 }
