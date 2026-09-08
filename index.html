@@ -751,15 +751,23 @@
             kelimeyiSecVeIsaretle(sozlukVerileri[rastgeleIndex]);
         }
 
-        function gununKelimesiniAyarla() {
-            if (sozlukVerileri.length === 0) return;
-            const bugun = new Date();
-            const gunKodu = bugun.getFullYear() * 1000 + bugun.getDate();
-            const index = gunKodu % sozlukVerileri.length;
-            const gununSecimi = sozlukVerileri[index];
-            document.getElementById('gunun-kelimesi-text').textContent = gununSecimi.kelime;
-            window._gununKelimesiObj = gununSecimi;
-        }
+     function gununKelimesiniAyarla() {
+    if (sozlukVerileri.length === 0) return;
+    
+    // Miladi takvime göre yılın gününü hesapla (1 - 365)
+    const bugun = new Date();
+    const baslangic = new Date(bugun.getFullYear(), 0, 0);
+    const fark = bugun - baslangic;
+    const gunSayisi = Math.floor(fark / (1000 * 60 * 60 * 24));
+    
+    // Basit bir Pseudo-Random Number Generator (PRNG) mantığıyla kelime seçimi
+    // Bu sayede kelimeler sırayla gitmez, rastgele dağılır ama herkese aynı kelime görünür.
+    const pseudoRandomIndex = (gunSayisi * 2654435761) % sozlukVerileri.length;
+    
+    const gununSecimi = sozlukVerileri[pseudoRandomIndex];
+    document.getElementById('gunun-kelimesi-text').textContent = gununSecimi.kelime;
+    window._gununKelimesiObj = gununSecimi;
+}
 
         function gununKelimesineGit() {
             if (window._gununKelimesiObj) {
