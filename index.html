@@ -427,7 +427,6 @@
                 <button class="icon-btn" onclick="rastgeleKelimeSec()" title="Rastgele Kelime (Rastgele)">🎲 Rastgele</button>
                 <button class="icon-btn" onclick="fontBoyutuDegistir('kucuk')" title="Yazıyı Küçült">A-</button>
                 <button class="icon-btn" onclick="fontBoyutuDegistir('buyuk')" title="Yazıyı Büyüt">A+</button>
-                <button class="icon-btn" onclick="sozlukDisaAktarsin()" title="Bütün Lugatı İndir (İnternetsiz Mod)">📥 İndir</button>
                 <button class="icon-btn" onclick="temaDegistir()" id="theme-toggle-btn" title="Koyu/Açık Tema">🌙 Tema</button>
             </div>
         </div>
@@ -778,18 +777,6 @@
             navigator.clipboard.writeText(window.location.href).then(() => {
                 gosterToast("Bağlantı panoya kopyalandı!");
             });
-        }
-
-        function sozlukDisaAktarsin() {
-            if(sozlukVerileri.length === 0) return;
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(sozlukVerileri, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "kefkefi_lugati_arsiv.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            gosterToast("Lugat arşivi indirildi!");
         }
 
         function fontBoyutuDegistir(yon) {
