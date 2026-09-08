@@ -581,7 +581,7 @@
                 urlHashKontrol();
                 sonAramalariGuncelleUI();
             } catch (error) {
-                wordListEl.innerHTML = '<div style="padding: 20px; color: red;">Lugat kelimeleri yüklenirken hata oluştu!</div>';
+                wordListEl.innerHTML = '<div style="padding: 20px; color: red;">Lugat verileri yüklenirken hata oluştu!</div>';
             }
         }
 
@@ -751,39 +751,31 @@
             kelimeyiSecVeIsaretle(sozlukVerileri[rastgeleIndex]);
         }
 
-function gununKelimesiniAyarla() {
-    if (sozlukVerileri.length === 0) return;
+        function gununKelimesiniAyarla() {
+            if (sozlukVerileri.length === 0) return;
 
-    // 1. Tüm kelimelerin kopyasını al
-    let karistirilmisListe = [...sozlukVerileri];
-    
-    // 2. Sabit bir seed (tohum) sayı belirle (Bu sayı herkes için aynı karıştırmayı sağlar)
-    let seed = 2026; 
+            let karistirilmisListe = [...sozlukVerileri];
+            let seed = 2026; 
 
-    // Fisher-Yates Shuffle ile kelimeleri "torbadan çekme" düzeninde karıştır
-    for (let i = karistirilmisListe.length - 1; i > 0; i--) {
-        seed = (seed * 9301 + 49297) % 233280;
-        const j = Math.floor((seed / 233280) * (i + 1));
-        [karistirilmisListe[i], karistirilmisListe[j]] = [karistirilmisListe[j], karistirilmisListe[i]];
-    }
+            for (let i = karistirilmisListe.length - 1; i > 0; i--) {
+                seed = (seed * 9301 + 49297) % 233280;
+                const j = Math.floor((seed / 233280) * (i + 1));
+                [karistirilmisListe[i], karistirilmisListe[j]] = [karistirilmisListe[j], karistirilmisListe[i]];
+            }
 
-    // 3. Başlangıç tarihinden itibaren kaçıncı günde olduğumuzu hesapla
-    const baslangicTarihi = new Date(2026, 0, 1); // 1 Ocak 2026
-    const bugun = new Date();
-    // Saat farklarını sıfırlamak için gün ortasını baz al
-    const bugunUTC = Date.UTC(bugun.getFullYear(), bugun.getMonth(), bugun.getDate());
-    const baslangicUTC = Date.UTC(baslangicTarihi.getFullYear(), baslangicTarihi.getMonth(), baslangicTarihi.getDate());
-    
-    const gecenGun = Math.floor((bugunUTC - baslangicUTC) / (1000 * 60 * 60 * 24));
+            const baslangicTarihi = new Date(2026, 0, 1);
+            const bugun = new Date();
+            const bugunUTC = Date.UTC(bugun.getFullYear(), bugun.getMonth(), bugun.getDate());
+            const baslangicUTC = Date.UTC(baslangicTarihi.getFullYear(), baslangicTarihi.getMonth(), baslangicTarihi.getDate());
+            
+            const gecenGun = Math.floor((bugunUTC - baslangicUTC) / (1000 * 60 * 60 * 24));
 
-    // 4. Geçen gün sayısına göre torbadan sıradaki kelimeyi seç (Tüm kelimeler bitince başa döner)
-    const index = Math.abs(gecenGun) % karistirilmisListe.length;
-    const gununSecimi = karistirilmisListe[index];
+            const index = Math.abs(gecenGun) % karistirilmisListe.length;
+            const gununSecimi = karistirilmisListe[index];
 
-    // 5. Ekrana bas ve tıklama nesnesini besle
-    document.getElementById('gunun-kelimesi-text').textContent = gununSecimi.kelime;
-    window._gununKelimesiObj = gununSecimi;
-}
+            document.getElementById('gunun-kelimesi-text').textContent = gununSecimi.kelime;
+            window._gununKelimesiObj = gununSecimi;
+        }
 
         function gununKelimesineGit() {
             if (window._gununKelimesiObj) {
@@ -880,6 +872,15 @@ function gununKelimesiniAyarla() {
         });
 
         window.addEventListener('hashchange', urlHashKontrol);
+
+        // Service Worker Kaydı
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Service Worker başarıyla kaydoldu:', reg.scope))
+                    .catch(err => console.error('Service Worker kaydı başarısız:', err));
+            });
+        }
 
         verileriGetir();
     </script>
