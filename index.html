@@ -395,6 +395,58 @@
         @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
         @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
 
+        /* MODAL STİLLERİ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--panel-bg);
+            color: var(--text-color);
+            padding: 24px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--muted-color);
+        }
+
+        .modal-close:hover {
+            color: var(--text-color);
+        }
+
+        .modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 16px;
+            color: var(--title-color);
+        }
+
+        .modal-body p {
+            line-height: 1.6;
+            color: var(--content-text);
+        }
+
         @media (max-width: 768px) {
             #back-button {
                 display: inline-block;
@@ -424,6 +476,7 @@
         <div class="header-top">
             <h1><span class="brand-kefkefi">Kefkefî</span> <span class="brand-lugati">Lugatı</span></h1>
             <div class="header-actions">
+                <button class="icon-btn" id="about-btn" title="Hakkında">ℹ️ Hakkında</button>
                 <button class="icon-btn" onclick="rastgeleKelimeSec()" title="Rastgele Kelime (Rastgele)">🎲 Rastgele</button>
                 <button class="icon-btn" onclick="fontBoyutuDegistir('kucuk')" title="Yazıyı Küçült">A-</button>
                 <button class="icon-btn" onclick="fontBoyutuDegistir('buyuk')" title="Yazıyı Büyüt">A+</button>
@@ -476,6 +529,18 @@
         </main>
     </div>
 
+    <!-- HAKKINDA MODAL -->
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="modal-close-btn">&times;</button>
+            <h2>Hakkında</h2>
+            <div class="modal-body">
+                <p>Kefkefî Lugatı, dijital internet ortamında kelime kültürünü yaşatmak, zenginleştirmek ve erişilebilir kılmak amacıyla oluşturulmuş bir sözlük projesidir.</p>
+                <p>Buraya dilediğiniz açıklamaları veya iletişim bilgilerinizi yazabilirsiniz.</p>
+            </div>
+        </div>
+    </div>
+
     <div id="toast">İşlem başarılı!</div>
 
     <script>
@@ -496,6 +561,25 @@
         const alphabetBar = document.getElementById('alphabet-bar');
         const recentSearchesContainer = document.getElementById('recent-searches-container');
         const recentChipsEl = document.getElementById('recent-chips');
+
+        // Modal Elemanları
+        const aboutBtn = document.getElementById('about-btn');
+        const aboutModal = document.getElementById('about-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        aboutBtn.addEventListener('click', () => {
+            aboutModal.style.display = 'flex';
+        });
+
+        modalCloseBtn.addEventListener('click', () => {
+            aboutModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === aboutModal) {
+                aboutModal.style.display = 'none';
+            }
+        });
 
         function sonAramalariGetir() {
             try {
@@ -816,6 +900,7 @@
                 searchInput.focus();
             }
             if (e.key === 'Escape') {
+                aboutModal.style.display = 'none';
                 listeyeDon();
                 searchInput.blur();
             }
